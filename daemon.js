@@ -4,7 +4,7 @@
 // for(var j = 0; j < 10; j++) {
 // 	var worker 	= fork('./script');
 // 	children.push(worker);
-// 	worker.send('swag!!');
+ 	// worker.send('swag!!');
 
 // }
 

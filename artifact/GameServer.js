@@ -259,9 +259,25 @@ GameServer.prototype.areOverlapping = function(o1, o2, skew) {
 }
 
 GameServer.prototype.mainLoop = function() {
-    setTimeout(this.mainLoop.bind(this), 15);
-	this.nodeHandler.update();
-}
+    setTimeout(this.mainLoop.bind(this), 1);
+
+    // Timer
+    var local = new Date();
+    this.passedTicks = local - this.time;
+    this.tick += this.passedTicks;
+    this.time = local;
+
+    if (this.passedTicks <= 0) return; // Skip update
+
+    // Update the handlers
+    this.nodeHandler.update();
+    // this.playerHandler.update();
+};
+
+// GameServer.prototype.mainLoop = function() {
+//     setTimeout(this.mainLoop.bind(this), 15);
+// 	this.nodeHandler.update();
+// }
 
 GameServer.prototype.angleBetween = function(start, end) {
     var y = end.y - start.y,
