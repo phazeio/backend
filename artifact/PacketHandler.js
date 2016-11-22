@@ -6,10 +6,6 @@ function PacketHandler(gameServer, socket) {
     this.socket = socket;
     // Detect protocol version - we can do something about it later
     this.protocolVersion = 0;
-
-    this.pressQ = false;
-    this.pressW = false;
-    this.pressSpace = false;
 }
 
 module.exports = PacketHandler;

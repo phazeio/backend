@@ -27,4 +27,6 @@ Food.prototype.update = function() {
 	this.updated = Date.now();
 }
 
+Food.prototype.getPlayer = () => this.player;
+
 module.exports = Food;

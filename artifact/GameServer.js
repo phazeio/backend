@@ -8,7 +8,8 @@ var redisPackage    = require('redis')
     , PacketHandler = require('./PacketHandler')
     , Entity        = require('./entity')
     , Packet        = require('./packet')
-    , process       = require('process');
+    , process       = require('process')
+    // , FFA           = require('./gamemodes/FFA');
 
 var gameServer;;
 
@@ -42,6 +43,8 @@ function GameServer(options) {
 
     this.stats = [];
 
+    // this.PhazeEvents = require('./Events')();
+
 	this.config = {
 		serverMaxConnections: 120, // max connections to server
         serverAddress: options.address,
@@ -72,6 +75,11 @@ function GameServer(options) {
 module.exports = () => new GameServer();
 
 GameServer.prototype.start = function() {
+    // var game = new FFA(this);
+    // game.init();
+    console.log('initalized...')
+
+    console.log('starting game server...');
     this.started = Date.now();
     // this.statsServer = http.createServer(((req, res) => {
     //     res.write(JSON.stringify({
@@ -185,7 +193,7 @@ GameServer.prototype.start = function() {
     }
 
     // setInterval(this.mainLoop.bind(this), 1000 / 60);
-    setTimeout(this.mainLoop.bind(this), 1000);
+    setTimeout(this.mainLoop.bind(this), 16);
     setInterval(this.statsLoop.bind(this), 1000 * 4)
 }
 
@@ -258,8 +266,13 @@ GameServer.prototype.areOverlapping = function(o1, o2, skew) {
 	return this.getDistance(o1, o2) < (0 - (skew || 0 ));
 }
 
+/*
+*
+* MAIN LOOP
+*
+*/
 GameServer.prototype.mainLoop = function() {
-    setTimeout(this.mainLoop.bind(this), 1);
+    setTimeout(this.mainLoop.bind(this), 16);
 
     // Timer
     var local = new Date();
@@ -267,7 +280,7 @@ GameServer.prototype.mainLoop = function() {
     this.tick += this.passedTicks;
     this.time = local;
 
-    if (this.passedTicks <= 0) return; // Skip update
+    // if (this.passedTicks <= 0) return; // Skip update
 
     // Update the handlers
     this.nodeHandler.update();

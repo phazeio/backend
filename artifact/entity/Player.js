@@ -1,7 +1,8 @@
 var Entity = require('./Entity')
 	, Packet = require('../packet')
 	, Food = require('./Food')
-	, Shard = require('./Shard');
+	, Shard = require('./Shard')
+	, PhazeEvent = require('../Events');
 
 /*
 * @class Player
@@ -25,6 +26,9 @@ function Player(gameServer, username, socket) {
 
 	this.joined = Date.now();
 	this.kills = 0;
+
+	this.combos = 0;
+	this.lastDamage = 0;
 
 	/* player performance rating	*/
 	this.elo = this.gameServer.config.playerStartElo;
@@ -83,15 +87,26 @@ Player.prototype.updateVisibleNodes = function() {
 		}
 	}
 
+	var updateNodes = {players: [], nonPlayers: []};
 	// find drop nodes
 	for(var j = 0; j < this.visibleNodes.length; j++) {
 		var node = this.visibleNodes[j];
 		if(newVisibileNodes.indexOf(node) <= -1)
 			// send drop packet
 			this.sendPacket((new Packet.DropNode(node)).build());
-		else if(node.entityType !== 0)
-			this.sendPacket((new Packet.UpdateNode(node)).build());
+		
+		if(node.entityType !== 0) {
+			if(node.entityType === 2)
+				updateNodes.players.push(node);
+			else
+				updateNodes.nonPlayers.push(node);
+
+			// this.sendPacket(new Packet.UpdateNode(node).build());
+		}
 	}
+
+	if(updateNodes.players.length !== 0 || updateNodes.nonPlayers.length !== 0)
+		this.sendPacket((new Packet.UpdateNodesV2(updateNodes)).build());
 
 	this.visibleNodes = newVisibileNodes;
 
@@ -173,7 +188,7 @@ Player.prototype.move = function() {
 	// 	this.x = this.gameServer - this.radius;
 
 	var y = this.y + this.gameServer.config.playerSpeed * Math.sin(theta);
-	if(y - this.radius > 0 && y + this.radius < this.gameServer.config.borderSize)
+	if(y > 0 && y + this.radius * 2 < this.gameServer.config.borderSize)
 		this.y += this.gameServer.config.playerSpeed * Math.sin(theta);
 
 	var x = this.x + this.gameServer.config.playerSpeed * Math.cos(theta);
@@ -209,13 +224,26 @@ Player.prototype.shoot = function() {
 * inflict damage on player
 */
 Player.prototype.inflictDamage = function(int, cause) {
-	this.health -= int;
+	// var e = new Events.PlayerDamageEvent(this, cause.shooter, cause);
+	// Events.emit('PlayerDamageEvent', e);
+
+	// if(e.cancelled)
+	// 	return;
+	if(Date.now() - this.lastDamage < 800)
+		this.combos++;
+	else
+		this.combos = 0;
+
+	this.lastDamage = Date.now();
+
+	this.health -= (int * (1 + this.combos));
 	if(this.health <= 0) {
+
 		var killer = cause.shooter;
 		var newElo = this.gameServer.calcElo(killer.elo, this.elo);
 		killer.elo += newElo;
 		killer.kills += 1;
-		killer.sendPacket((new Packet.Alert('You killed ' + this.username + ' +' + newElo + 'elo')).build());
+		killer.sendPacket((new Packet.Alert('You killed ' + this.username + ' +' + newElo)).build());
 
 		return this.die();
 	}
