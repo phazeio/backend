@@ -111,8 +111,6 @@ function Worker(options) {
 
 	/*	send options to worker c: 	*/
 	this.worker.send('options\b' + JSON.stringify(options));
-
-	client.hset('phaze:servers', address, options.port);
 }
 
 Worker.prototype.handleMessage = function(message) {
