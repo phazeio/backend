@@ -95,6 +95,7 @@ GameServer.prototype.start = function() {
     // this.statsServer.listen(4010, () => console.log('stats server started...'));
 
     this.redis = redisPackage.createClient();
+    this.redis.auth('4f6e8c1199fa3d7eab27645b36d4986cea0dcb09');
 
     this.redis.on('connect', () => console.log('Connected to Redis.'));
     this.redis.on('error', (err) => console.log(err));
