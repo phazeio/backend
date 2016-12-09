@@ -11,39 +11,18 @@
 /*	modules	*/
 var fs				= require('fs')
 	os 				= require('os')
-	fork 			= require('child_process').fork,
+	fork 			= require('child_process').fork;
 
-var address 		= os.networkInterfaces()['eth0'][0]['address'];;
+var address;
+if(os.networkInterfaces()['eth0'] && os.networkInterfaces()['eth0'][0])
+		address = os.networkInterfaces()['eth0'][0]['address'];
+else
+	address = '127.0.0.1';
 
 /* object literal of workers, port => worker*/
 var childs			= {};
 
 var apps = [
-	{
-		maxPlayers: 80,
-		gamemode: 1,
-		address: address
-	},
-	{
-		maxPlayers: 80,
-		gamemode: 1,
-		address: address
-	},
-	{
-		maxPlayers: 80,
-		gamemode: 1,
-		address: address
-	},
-	{
-		maxPlayers: 80,
-		gamemode: 1,
-		address: address
-	},
-	{
-		maxPlayers: 80,
-		gamemode: 1,
-		address: address
-	},
 	{
 		maxPlayers: 80,
 		gamemode: 1,

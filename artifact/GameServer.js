@@ -9,7 +9,29 @@ var redisPackage    = require('redis')
     , Entity        = require('./entity')
     , Packet        = require('./packet')
     , process       = require('process')
+    , jsonfile      = require('jsonfile');
     // , FFA           = require('./gamemodes/FFA');
+
+var configFile      = __dirname + '/config/config.json'
+    , config;
+try {
+    config          = jsonfile.readFileSync(configFile);
+} catch(err) {
+    console.log(err);
+}
+
+// no config exists, so create one
+if(!config) {
+    config = {
+        redis: {
+            address: '127.0.0.1',
+            port: 6379,
+            password: 'haiku'
+        }
+    }
+
+    jsonfile.writeFileSync(configFile, config);
+}
 
 var gameServer;;
 
@@ -94,8 +116,8 @@ GameServer.prototype.start = function() {
     // }).bind(this));
     // this.statsServer.listen(4010, () => console.log('stats server started...'));
 
-    this.redis = redisPackage.createClient();
-    this.redis.auth('4f6e8c1199fa3d7eab27645b36d4986cea0dcb09');
+    this.redis = redisPackage.createClient(config.redis.port, config.redis.address);
+    this.redis.auth(config.redis.password);
     this.redis.hset('phaze:servers', this.config.serverAddress, this.config.serverPort)
 
     this.redis.on('connect', () => console.log('Connected to Redis.'));
@@ -145,7 +167,8 @@ GameServer.prototype.start = function() {
     });
 
     function connectionEstablished(ws) {
-        console.log('WS: New Connection.');
+        process.send('newconn');
+
         if (this.clients.length >= this.config.serverMaxConnections || ws.checkSameAddressConnections(this) >= this.config.addressMaxConnections) { // Server full
             ws.close();
             return;
