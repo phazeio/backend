@@ -125,8 +125,8 @@ GameServer.prototype.start = function() {
 
     var self = this;
     function update() {
-        self.redis.hset('phaze:heartbeats', self.config.address + ':' + self.config.serverPort, Date.now());
-        self.redis.hset('phaze:players', self.config.address + ':' + self.config.serverPort, self.nodesPlayer.length);
+        self.redis.hset('phaze:heartbeats', self.config.serverAddress + ':' + self.config.serverPort, Date.now());
+        self.redis.hset('phaze:players', self.config.serverAddress + ':' + self.config.serverPort, self.nodesPlayer.length);
     }
 
     setInterval(update, 1000 * 10);
