@@ -53,6 +53,7 @@ function GameServer(options) {
 
     this.nodes = [];
 	this.nodesFood = [];
+    this.nodesPower = [];
 	this.nodesShard = [];
 	this.nodesPlayer = [];
 
@@ -142,6 +143,11 @@ GameServer.prototype.start = function() {
         for(var j = 0; j < this.config.foodAmount; j++) {
             var food = new Entity.Food(this);
             this.nodeHandler.addFood(food);
+        }
+
+        for(var j = 0; j < this.config.powerAmount; j++) {
+            var power = new Entity.Power(this);
+            this.nodeHandler.addPower(power);
         }
 
         // Done

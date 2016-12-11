@@ -163,7 +163,7 @@ Player.prototype.calculateConsumption = function() {
 			this.poweredAt = Date.now();
 		}
 
-		this.gameServer.nodeHandler.removeNode(entiy);
+		this.gameServer.nodeHandler.removeNode(entity);
 	
 
 		this.eat();
