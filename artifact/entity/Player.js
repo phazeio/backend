@@ -99,7 +99,7 @@ Player.prototype.updateVisibleNodes = function() {
 			// send drop packet
 			this.sendPacket((new Packet.DropNode(node)).build());
 		
-		if(node.entityType < 2) {
+		if(node.entityType > 1) {
 			if(node.entityType === 2)
 				updateNodes.players.push(node);
 			else
