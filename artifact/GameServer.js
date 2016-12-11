@@ -84,11 +84,11 @@ function GameServer(options) {
         playerMaxNickLength: 13,
 		playerDisconnectTime: 20, // amount of seconds before a player is removed from the game
         playerStartElo: 1400,
-		playerSpeed: 4, // player speed
+		playerSpeed: 8, // player speed
         protocolVersion: 5,
         maxPlayers: options.maxPlayer || 80,
 		shardSize: 12, // shard radius
-		shardSpeed: 8, // shard speed
+		shardSpeed: 16, // shard speed
         shardTimeout: 10, // amount of seconds before shard is destroyed
 		viewDistance: 1000,
 	}
@@ -218,7 +218,7 @@ GameServer.prototype.start = function() {
     }
 
     // setInterval(this.mainLoop.bind(this), 1000 / 60);
-    setTimeout(this.mainLoop.bind(this), 16);
+    setTimeout(this.mainLoop.bind(this), 32);
     setInterval(this.statsLoop.bind(this), 1000 * 4)
 }
 
