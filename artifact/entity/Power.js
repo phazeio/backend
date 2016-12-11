@@ -9,9 +9,9 @@ function Power(gameServer, x, y, player) {
 	Entity.call(this, gameServer, x, y, r);
 
 	this.color = {
-		r: 255,
-		g: 255,
-		b: 255
+		r: 38,
+		g: 38,
+		b: 38
 	}
 
 	/*	food entity type is 0	*/

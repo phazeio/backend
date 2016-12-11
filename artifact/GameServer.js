@@ -9,8 +9,12 @@ var redisPackage    = require('redis')
     , Entity        = require('./entity')
     , Packet        = require('./packet')
     , process       = require('process')
+    , mongoose      = require('mongoose')
+    , Schema        = mongoose.Schema
     , jsonfile      = require('jsonfile');
     // , FFA           = require('./gamemodes/FFA');
+
+mongoose.model('Leaderboard', new Schema({ nickname: String, score: Number }));
 
 var configFile      = __dirname + '/config/config.json'
     , config;
@@ -50,6 +54,14 @@ process.on('message', function(message) {
 function GameServer(options) {
 	this.clients = [];
     this.redis = null;
+    this.mongo = mongoose.createConnection('mongodb://cole:phazeiscool@ds133158.mlab.com:33158/phaze-test', (err) => {
+        if(err)
+            return console.log(err);
+
+        console.log('Connected to Mongo!');
+    });
+
+    this.Leaderboard = this.mongo.model('Leaderboard');
 
     this.nodes = [];
 	this.nodesFood = [];
@@ -85,13 +97,13 @@ function GameServer(options) {
         playerMaxNickLength: 13,
 		playerDisconnectTime: 20, // amount of seconds before a player is removed from the game
         playerStartElo: 1400,
-		playerSpeed: 4, // player speed
-        powerAmount: 40,
-        powerSize: 10,
+		playerSpeed: 5, // player speed
+        powerAmount: 20,
+        powerSize: 12,
         protocolVersion: 5,
         maxPlayers: options.maxPlayer || 80,
 		shardSize: 12, // shard radius
-		shardSpeed: 8, // shard speed
+		shardSpeed: 9, // shard speed
         shardTimeout: 10, // amount of seconds before shard is destroyed
 		viewDistance: 1000,
 	}
@@ -226,7 +238,7 @@ GameServer.prototype.start = function() {
     }
 
     // setInterval(this.mainLoop.bind(this), 1000 / 60);
-    setTimeout(this.mainLoop.bind(this), 32);
+    setTimeout(this.mainLoop.bind(this), 40);
     setInterval(this.statsLoop.bind(this), 1000 * 4)
 }
 
