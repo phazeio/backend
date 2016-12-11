@@ -1,6 +1,7 @@
 var Entity = require('./Entity')
 	, Packet = require('../packet')
 	, Food = require('./Food')
+	, Power = require('./Power')
 	, Shard = require('./Shard')
 	, PhazeEvent = require('../Events');
 
@@ -18,6 +19,9 @@ function Player(gameServer, username, socket) {
 	this.damage = false;
 	this.healing = false;
 	this.mouse = {x: null, y: null};
+
+	// when the player got power enhancer
+	this.poweredAt = 0;
 
 	this.socket = socket;
 	this.visibleNodes = [];
@@ -95,7 +99,7 @@ Player.prototype.updateVisibleNodes = function() {
 			// send drop packet
 			this.sendPacket((new Packet.DropNode(node)).build());
 		
-		if(node.entityType !== 0) {
+		if(node.entityType !== < 2) {
 			if(node.entityType === 2)
 				updateNodes.players.push(node);
 			else
@@ -130,26 +134,37 @@ Player.prototype.calculateConsumption = function() {
 	var newVisibileNodes = this.visibleNodes;
 
 	for(var j = 0; j < newVisibileNodes.length; j++) {
-		var food = newVisibileNodes[j];
+		var entity = newVisibileNodes[j];
 
-		if(!(food instanceof Food))
+		if(!(entity instanceof Food || entity instanceof Power))
 			continue;
 
-		if(this.mana >= this.gameServer.config.playerMaxMana)
+		if(!this.gameServer.areOverlapping(this, entity))
 			continue;
 
-		if(!this.gameServer.areOverlapping(this, food))
+		if(entity.player && entity.player._id === this._id)
 			continue;
 
-		if(food.player && food.player._id === this._id)
-			continue;
+		if(entity instanceof Food) {
+			if(this.mana >= this.gameServer.config.playerMaxMana)
+				continue;
 
-		this.gameServer.nodeHandler.removeNode(food);
-		
-		var food = new Food(this.gameServer);
+			var food = new Food(this.gameServer);
 
-		if(this.gameServer.nodesFood.length < this.gameServer.config.foodAmount)
-        	this.gameServer.nodeHandler.addFood(food);
+			if(this.gameServer.nodesFood.length < this.gameServer.config.foodAmount) {
+	        	this.gameServer.nodeHandler.addFood(food);
+	        	this.eat();
+	        }
+		}
+
+		if(entity instanceof Power) {
+			var power = new Power(this.gameServer);
+
+			this.poweredAt = Date.now();
+		}
+
+		this.gameServer.nodeHandler.removeNode(entiy);
+	
 
 		this.eat();
 	}
@@ -186,14 +201,15 @@ Player.prototype.move = function() {
 
 	// if(this.x + this.radius > this.gameServer.config.borderSize)
 	// 	this.x = this.gameServer - this.radius;
+	var speed = this.poweredAt > Date.now() - 1000 * 10 ? this.gameServer.config.playerSpeed * 1.5 : this.gameServer.config.playerSpeed;
 
-	var y = this.y + this.gameServer.config.playerSpeed * Math.sin(theta);
+	var y = this.y + speed * Math.sin(theta);
 	if(y > 0 && y + this.radius * 2 < this.gameServer.config.borderSize)
-		this.y += this.gameServer.config.playerSpeed * Math.sin(theta);
+		this.y += speed * Math.sin(theta);
 
-	var x = this.x + this.gameServer.config.playerSpeed * Math.cos(theta);
+	var x = this.x + speed * Math.cos(theta);
 	if(x - this.radius > 0 && x + this.radius < this.gameServer.config.borderSize)
-		this.x += this.gameServer.config.playerSpeed * Math.cos(theta);
+		this.x += speed * Math.cos(theta);
 
 	this.sendPacket((new Packet.UpdatePosition(this)).build());
 }

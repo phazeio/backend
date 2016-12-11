@@ -85,6 +85,8 @@ function GameServer(options) {
 		playerDisconnectTime: 20, // amount of seconds before a player is removed from the game
         playerStartElo: 1400,
 		playerSpeed: 4, // player speed
+        powerAmount: 40,
+        powerSize: 10,
         protocolVersion: 5,
         maxPlayers: options.maxPlayer || 80,
 		shardSize: 12, // shard radius

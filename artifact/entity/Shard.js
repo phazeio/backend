@@ -9,7 +9,7 @@ function Shard(gameServer, x, y, angle, player) {
 	this.angle = angle;
 	this.shooter = player;
 	this.createdAt = Date.now();
-	this.entityType = 1;
+	this.entityType = 3;
 	this.color = {
 		r: 255,
 		g: 80,

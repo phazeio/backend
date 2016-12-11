@@ -13,6 +13,8 @@ NodeHandler.prototype.removeNode = function(node) {
 		this.removeFood(node);
 	else if(node instanceof Entity.Shard)
 		this.removeShard(node);
+	else if(node instanceof Entity.Power)
+		this.removePower(node)
 	// 	// some shit went wrong
 
 	this.gameServer.nodes.remove(node);
@@ -22,10 +24,21 @@ NodeHandler.prototype.removeNode = function(node) {
 	// this.gameServer.nodes.splice(this.gameServer.nodes.indexOf(node), 1);
 }
 
+NodeHandler.addPower = function(node) {
+	this.gameServer.nodesPower.push(node);
+	this.gameServer.nodes.push(node);
+}
+
 NodeHandler.prototype.addPlayer = function(node) {
 	this.gameServer.nodesPlayer.push(node);
 	this.gameServer.nodes.push(node);
 }
+
+NodeHandler.prototype.removeNode = function(node) {
+	// remove from nodesFood
+	this.gameServer.nodesPower.remove(node);
+}
+
 
 NodeHandler.prototype.removePlayer = function(node) {
 	// remove from nodesFood
