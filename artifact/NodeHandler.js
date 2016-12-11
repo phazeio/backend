@@ -24,7 +24,7 @@ NodeHandler.prototype.removeNode = function(node) {
 	// this.gameServer.nodes.splice(this.gameServer.nodes.indexOf(node), 1);
 }
 
-NodeHandler.addPower = function(node) {
+NodeHandler.prototype.addPower = function(node) {
 	this.gameServer.nodesPower.push(node);
 	this.gameServer.nodes.push(node);
 }
@@ -34,8 +34,8 @@ NodeHandler.prototype.addPlayer = function(node) {
 	this.gameServer.nodes.push(node);
 }
 
-NodeHandler.prototype.removeNode = function(node) {
-	// remove from nodesFood
+NodeHandler.prototype.removePower = function(node) {
+	// remove from nodesPower
 	this.gameServer.nodesPower.remove(node);
 }
 

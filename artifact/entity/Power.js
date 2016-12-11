@@ -3,7 +3,7 @@ var Entity = require('./Entity');
 /*
 * @class Power
 */
-function Power(gameServer, x, y) {
+function Power(gameServer, x, y, player) {
 	var r = gameServer.config.powerSize;
 
 	Entity.call(this, gameServer, x, y, r);
@@ -15,7 +15,7 @@ function Power(gameServer, x, y) {
 	}
 
 	/*	food entity type is 0	*/
-	this.entityType = 3;
+	this.entityType = 1;
 
 	/*	player that spawned food on death	*/
 	this.player = player;
