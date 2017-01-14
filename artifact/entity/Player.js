@@ -74,7 +74,7 @@ Player.prototype.calculateAngle = function() {
 	}
 
 	return this.theta;
-}
+} 
 
 Player.prototype.updateVisibleNodes = function() {
 	var newVisibileNodes = [];

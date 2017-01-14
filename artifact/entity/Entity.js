@@ -10,7 +10,7 @@ var createObjectID = (num) => {
 /*
 * @class Entity
 */
-function Entity(gameServer, x, y, radius) {
+function Entity(gameServer, x, y, radius, color) {
 	var _x = x ? x : gameServer.getSafeRandomCoord()
 		, _y = y ? y : gameServer.getSafeRandomCoord();
 
