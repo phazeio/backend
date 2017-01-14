@@ -99,7 +99,7 @@ Player.prototype.updateVisibleNodes = function() {
 			// send drop packet
 			this.sendPacket((new Packet.DropNode(node)).build());
 		
-		if(node.entityType > 1) {
+		if(node.entityType === 2 || node.entityType === 3) {
 			if(node.entityType === 2)
 				updateNodes.players.push(node);
 			else
@@ -201,7 +201,7 @@ Player.prototype.move = function() {
 
 	// if(this.x + this.radius > this.gameServer.config.borderSize)
 	// 	this.x = this.gameServer - this.radius;
-	var speed = this.poweredAt > Date.now() - 1000 * 10 ? this.gameServer.config.playerSpeed * 1.5 : this.gameServer.config.playerSpeed;
+	var speed = this.poweredAt > Date.now() - 1000 * 10 ? this.gameServer.config.playerSpeed * 1.7 : this.gameServer.config.playerSpeed;
 
 	var y = this.y + speed * Math.sin(theta);
 	if(y > 0 && y + this.radius * 2 < this.gameServer.config.borderSize)
@@ -245,14 +245,15 @@ Player.prototype.inflictDamage = function(int, cause) {
 
 	// if(e.cancelled)
 	// 	return;
-	if(Date.now() - this.lastDamage < 800)
-		this.combos++;
-	else
-		this.combos = 0;
+	// if(Date.now() - this.lastDamage < 800)
+	// 	this.combos++;
+	// else
+	// 	this.combos = 0;
 
-	this.lastDamage = Date.now();
+	// this.lastDamage = Date.now();
 
-	this.health -= (int * (1 + this.combos));
+	// this.health -= (int * (1 + this.combos));
+	this.health -= int;
 	if(this.health <= 0) {
 
 		var killer = cause.shooter;
@@ -292,6 +293,12 @@ Player.prototype.die = function() {
 
 	for(var j = 0; j < (this.mana / 2 < this.gameServer.config.playerMaxDrops ? this.mana / 2 : this.gameServer.config.playerMaxDrops); j++)
 		this.gameServer.nodeHandler.addFood(new Food(this.gameServer, (Math.random() * (this.x + this.radius)) + (this.x - this.radius), (Math.random() * (this.y + this.radius)) + (this.y - this.radius), this))
+
+	var stats = new this.gameServer.Leaderboard({nickname: this.username, score: this.elo});
+	stats.save(err => {
+		if(err)
+			return console.log(err);
+	})
 
 	this.kick();
 }
